@@ -1,0 +1,12 @@
+name: td-agent
+summary: Data collector to implement unified logging layers
+maintainer: Eduardo Silva <eduardo@trasure-data.com>
+description: |
+  td-agent (Fluentd) is a specialized tool to perform data collection and
+  implement unified logging layers in your environments.
+tags:
+  - analytics
+  - big_data
+  - monitoring
+  - network
+subordinate: false
