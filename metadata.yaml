@@ -10,3 +10,7 @@ tags:
   - monitoring
   - network
 subordinate: false
+
+requires:
+  out_mongodb:
+      interface: mongodb
