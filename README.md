@@ -1,7 +1,7 @@
 # Overview
 
-td-agent (Fluentd) is a specialized open source tool to perform data collection
-and implement unified logging layers in your environments.
+td-agent (Fluentd) is an open source data collection tool that allows you to
+implement unified logging layers in your environment.
 
 It support more than 300 extensions to manage different input sources such as
 Docker, Syslog, Nginx, Apache and several outputs such as Elasticsearch, HDFS,
