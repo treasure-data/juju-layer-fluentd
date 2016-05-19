@@ -1,16 +1,24 @@
-name: td-agent
-summary: Data collector to implement unified logging layers
+name: fluentd
+summary: Logging layer / Data Collector
 maintainer: Eduardo Silva <eduardo@trasure-data.com>
 description: |
-  td-agent (Fluentd) is a specialized tool to perform data collection and
-  implement unified logging layers in your environments.
+  Installs the fluentd logging agent on the machine
 tags:
   - analytics
   - big_data
   - monitoring
-  - network
-subordinate: false
-
+subordinate: true
+series:
+  - xenial
+  - trusty
+  - precise
+provides:
+  website:
+    interface: http
 requires:
-  out_mongodb:
-      interface: mongodb
+  juju-info:
+    interface: juju-info
+    scope: container
+#peers:
+#  peer-relation:
+#   interface: interface-name
