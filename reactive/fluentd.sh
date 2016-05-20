@@ -283,6 +283,8 @@ EOF
         fi
         # invoke-rc.d ${FLUENT_BIN_NAME} start || exit $?
     fi
+
+    gem install fluent-plugin-reform-reformer
 }
 
 function precise::x86_64::install_fluentd() { 
@@ -374,6 +376,8 @@ function all::all::configure_fluentd() {
         "${MYDIR}/../files/etc/fluent/fluent.conf" "/etc/${FLUENT_BIN_NAME}/${FLUENT_BIN_NAME}.conf"
 
     service cron restart
+
+    chmod -R a+r /var/log
 }
 
 #####################################################################
@@ -385,15 +389,14 @@ function all::all::configure_fluentd() {
 @hook 'elasticsearch-relation-joined'
 function initialize_connection_to_elasticsearch() {
     juju-log "Detected Elasticsearch relation. Connecting."
-    charms.reactive set_state 'elasticsearch.connected'
 }
 
-@hook 'elasticsearch-relation-departed'
+@hook 'elasticsearch-relation-changed'
 function connect_to_elasticsearch() {
     # Hard coding plugin name 
     PLUGIN=elasticsearch
 
-    [ -z "$(relation-get cluster-name)" ] && exit 0
+    # [ -z "$(relation-get cluster-name)" ] && exit 0
 
     juju-log $JUJU_REMOTE_UNIT modified its settings
 
@@ -402,19 +405,20 @@ function connect_to_elasticsearch() {
     do
         ES_HOST=$(relation-get private-address ${MEMBER})
         ES_PORT=$(relation-get port ${MEMBER})
-        PLUGIN_HOST+="${ES_HOST}:${ES_HOST},"
+        PLUGIN_HOST+="${ES_HOST}:${ES_PORT},"
     done
     PLUGIN_HOST="$(echo ${PLUGIN_HOST} | head -c -2)"
 
-    juju-log /usr/local/bin/fluentd-add-output.sh -p "${PLUGIN}" -h "${PLUGIN_HOST}" && \
-    /usr/local/bin/fluentd-add-output.sh -p "${PLUGIN}" -h "${PLUGIN_HOST}" && \
-        charms.reactive set_state 'elasticsearch.available'
+    # juju-log /usr/local/bin/fluentd-add-output.sh -p "${PLUGIN}" -h "${PLUGIN_HOST}" && \
+    /usr/local/bin/fluentd-add-output.sh \
+        -p "${PLUGIN}" \
+        -h "${PLUGIN_HOST}" \
+        -c "${FLUENT_CONF_DIR}"
 }
 
 @hook 'elasticsearch-relation-departed'
 function disconnect_from_elasticsearch() {
     juju-log "Detected Elasticsearch relation destruction. Disconnecting."
-    charms.reactive set_state 'elasticsearch.departed'
     connect_to_elasticsearch
 }
 

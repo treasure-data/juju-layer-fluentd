@@ -4,14 +4,14 @@ SOFTWARE_CLASS="logging"
 TEMPLATE_DIR="/opt/templates"
 
 function charm::lib::get_templates() {
-    local INSTALL_DIR="$1"
+	local INSTALL_DIR="$1"
 
-    [ -d "${INSTALL_DIR}" ] && { 
-        cd "${INSTALL_DIR}"
-        sudo git pull --quiet --force origin master 
-    } || {
-        sudo git clone --quiet --recursive https://github.com/SaMnCo/ops-templates.git "${INSTALL_DIR}"
-    }
+	[ -d "${INSTALL_DIR}" ] && { 
+		cd "${INSTALL_DIR}"
+		sudo git pull --quiet --force origin master 
+	} || {
+		sudo git clone --quiet --recursive https://github.com/SaMnCo/ops-templates.git "${INSTALL_DIR}"
+	}
 }
 
 function all::all::add_output_plugin() {
@@ -25,7 +25,7 @@ function all::all::add_output_plugin() {
         -exec sudo cp -f "{}/output_${PLUGIN_ID}.conf" "${ENABLED_FOLDER}/" \;
 
     # echo "${ENABLED_FOLDER}/output_${PLUGIN_ID}.conf"
-    sudo sed -i "s|^\ \ hosts\ .*$|\ \ hosts ${PLUGIN_HOST}|g" "${ENABLED_FOLDER}/output_${PLUGIN_ID}.conf"
+    sudo sed -i "s|PLUGIN_HOST|${PLUGIN_HOST}|g" "${ENABLED_FOLDER}/output_${PLUGIN_ID}.conf"
 
         # -e s|PLUGIN_PORT|"${PLUGIN_PORT}"|g \
 }
@@ -36,7 +36,7 @@ function all::all::remove_output_plugin() {
 }
 
 function all::all::restart_agent() {
-    sudo service ${SOFTWARE_NAME} restart || { sudo service ${SOFTWARE_NAME} stop; sudo service ${SOFTWARE_NAME} start; }
+	sudo service ${SOFTWARE_NAME} restart || { sudo service ${SOFTWARE_NAME} stop; sudo service ${SOFTWARE_NAME} start; }
 }
 
 # Now processing options 
@@ -56,17 +56,20 @@ while true; do
     case "$1" in
         -h|--host)
             PLUGIN_HOSTS="$2"
+	    # echo found host ${PLUGIN_HOSTS}
             shift 2
             ;;
         -c|--config)
             CONF_DIR="$2"
-            AVAILABLE_FOLDER=${CONF_DIR}/conf.d/available
-            ENABLED_FOLDER=${CONF_DIR}/conf.d/enabled
-            SOFTWARE_NAME="$(echo ${CONF_DIR} | rev | cut -f1 -d "/" | rev)"
+	    AVAILABLE_FOLDER=${CONF_DIR}/conf.d/available
+	    ENABLED_FOLDER=${CONF_DIR}/conf.d/enabled
+	    SOFTWARE_NAME="$(echo ${CONF_DIR} | rev | cut -f1 -d "/" | rev)"
+	    # echo found host ${PLUGIN_HOSTS}
             shift 2
             ;;
         -p|--plugin)
             PLUGIN_ID="$2"
+	    # echo found plugin ${PLUGIN_ID}
             shift 2
             ;;
         *)
