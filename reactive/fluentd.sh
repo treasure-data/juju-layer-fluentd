@@ -182,32 +182,6 @@ function charm::lib::get_templates() {
     }
 }
 
-function charm::lib::find_roles() {
-    for TARGET in $(charm::lib::self_assessment)
-    do
-        case "${CHARM}" in 
-            ceilometer | cinder | glance | heat | horizon | keystone | neutron* | nova* | openstack-dashboard )
-                juju-log "Configuring ${SOFTWARE_NAME} for ${TARGET} (OpenStack)"
-                TARGET_LIST+=" ${TARGET} openstack dmesg"
-            ;;
-            ceph* )
-                juju-log "Configuring ${SOFTWARE_NAME} for ${TARGET} (Ceph Storage)"
-                TARGET_LIST+=" ${TARGET} dmesg ceph-global"
-            ;;
-            * )
-                juju-log "Configuring ${SOFTWARE_NAME} for ${TARGET} (Generic Solution)"
-                TARGET_LIST+=" ${TARGET}"
-            ;;
-        esac
-    done
-
-    echo "${TARGET_LIST}" | sort | uniq 
-}
-
-function charm::lib::who_am_i() {
-    cat "${JUJU_CHARM_DIR}/metadata.yaml" | grep 'name' | head -n1 | cut -f2 -d' '
-}
-
 #####################################################################
 #
 # Install per architecture
@@ -389,7 +363,7 @@ function all::all::configure_fluentd() {
     install -m 0755 -o root -g root \
         ${MYDIR}/../files/usr/local/bin/fluentd-update-config.sh /usr/local/bin/fluentd-update-config.sh
     install -m 0755 -o root -g root \
-        ${MYDIR}/../files/usr/local/bin/fluentd-update-config.sh /usr/local/bin/fluentd-update-config.sh
+        ${MYDIR}/../files/usr/local/bin/fluentd-add-output.sh /usr/local/bin/fluentd-add-output.sh
 
     install -m 0755 -o root -g root \
         ${MYDIR}/../files/etc/cron.d/fluentd /etc/cron.d/fluentd
