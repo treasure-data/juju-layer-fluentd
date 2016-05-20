@@ -62,7 +62,7 @@ function all::all::add_input_sources() {
 }
 
 function all::all::remove_input_sources() {
-    sudo rm -rf "${ENABLED_FOLDER}/*"
+    sudo rm -rf "${ENABLED_FOLDER}/input*"
 }
 
 function all::all::restart_agent() {

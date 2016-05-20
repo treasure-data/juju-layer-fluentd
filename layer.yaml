@@ -1,5 +1,5 @@
 repo: https://github.com/SaMnCo/layer-fluentd.git
-includes: ['layer:basic']  # if you use any interfaces, add them here
+includes: ['layer:basic', 'interface:elasticsearch'] 
 options:
   basic:
     packages:

@@ -19,6 +19,10 @@ requires:
   juju-info:
     interface: juju-info
     scope: container
+requires:
+  elasticsearch:
+    interface: elasticsearch
+
 #peers:
 #  peer-relation:
 #   interface: interface-name

@@ -21,7 +21,7 @@ MYDIR="$(dirname "${MYNAME}")"
 
 #####################################################################
 #
-# Charm Content
+# Assessments
 # 
 #####################################################################
 OS=` echo \`uname\` | tr '[:upper:]' '[:lower:]'`
@@ -98,43 +98,42 @@ case "${PSEUDONAME}" in
         APT_CMD="apt-get"
         APT_FORCE="--force-yes"
 
-        # This is so hacky but Juju leaves me no choice
+        # This is hacky. Eventually we should remove the packaging that don't respect naming
         cat >> /etc/profile.d/${SOFTWARE_NAME}.sh << EOF
-export BIN_NAME=td-agent
-export CONF_DIR=/etc/${BIN_NAME}
-export PLUGIN_DIR=${CONF_DIR}/plugin
-export LOG_DIR=/var/log/${BIN_NAME}
-export PID_DIR=/var/run/${BIN_NAME}
-export CONF_FILE=${CONF_DIR}/${BIN_NAME}.conf
+export FLUENT_BIN_NAME=fluent
+export FLUENT_CONF_DIR=/etc/${FLUENT_BIN_NAME}
+export FLUENT_PLUGIN_DIR=${FLUENT_CONF_DIR}/plugin
+export FLUENT_LOG_DIR=/var/log/${FLUENT_BIN_NAME}
+export FLUENT_PID_DIR=/var/run/${FLUENT_BIN_NAME}
+export FLUENT_CONF_FILE=${FLUENT_CONF_DIR}/${FLUENT_BIN_NAME}.conf
 EOF
 
-        export BIN_NAME=td-agent
-        export CONF_DIR=/etc/${BIN_NAME}
-        export PLUGIN_DIR=${CONF_DIR}/plugin
-        export LOG_DIR=/var/log/${BIN_NAME}
-        export PID_DIR=/var/run/${BIN_NAME}
-        export CONF_FILE=${CONF_DIR}/${BIN_NAME}.conf
+        export FLUENT_BIN_NAME=fluent
+        export FLUENT_CONF_DIR=/etc/${FLUENT_BIN_NAME}
+        export FLUENT_PLUGIN_DIR=${FLUENT_CONF_DIR}/plugin
+        export FLUENT_LOG_DIR=/var/log/${FLUENT_BIN_NAME}
+        export FLUENT_PID_DIR=/var/run/${FLUENT_BIN_NAME}
+        export FLUENT_CONF_FILE=${FLUENT_CONF_DIR}/${FLUENT_BIN_NAME}.conf
     ;;
     "trusty" )
         LXC_CMD="$(running-in-container | grep lxc | wc -l)"
         APT_CMD="apt-get"
         APT_FORCE="--force-yes"
         cat >> /etc/profile.d/${SOFTWARE_NAME}.sh << EOF
-export BIN_NAME=td-agent
-export CONF_DIR=/etc/${BIN_NAME}
-export PLUGIN_DIR=${CONF_DIR}/plugin
-export LOG_DIR=/var/log/${BIN_NAME}
-export PID_DIR=/var/run/${BIN_NAME}
-export CONF_FILE=${CONF_DIR}/${BIN_NAME}.conf
+export FLUENT_BIN_NAME=fluent
+export FLUENT_CONF_DIR=/etc/${FLUENT_BIN_NAME}
+export FLUENT_PLUGIN_DIR=${FLUENT_CONF_DIR}/plugin
+export FLUENT_LOG_DIR=/var/log/${FLUENT_BIN_NAME}
+export FLUENT_PID_DIR=/var/run/${FLUENT_BIN_NAME}
+export FLUENT_CONF_FILE=${FLUENT_CONF_DIR}/${FLUENT_BIN_NAME}.conf
 EOF
 
-        export BIN_NAME=td-agent
-        export CONF_DIR=/etc/${BIN_NAME}
-        export PLUGIN_DIR=${CONF_DIR}/plugin
-        export LOG_DIR=/var/log/${BIN_NAME}
-        export PID_DIR=/var/run/${BIN_NAME}
-        export CONF_FILE=${CONF_DIR}/${BIN_NAME}.conf
-
+        export FLUENT_BIN_NAME=fluent
+        export FLUENT_CONF_DIR=/etc/${FLUENT_BIN_NAME}
+        export FLUENT_PLUGIN_DIR=${FLUENT_CONF_DIR}/plugin
+        export FLUENT_LOG_DIR=/var/log/${FLUENT_BIN_NAME}
+        export FLUENT_PID_DIR=/var/run/${FLUENT_BIN_NAME}
+        export FLUENT_CONF_FILE=${FLUENT_CONF_DIR}/${FLUENT_BIN_NAME}.conf
     ;;
     "xenial" )
         LXC_CMD="$(systemd-detect-virt --container | grep lxc | wc -l)"
@@ -142,20 +141,20 @@ EOF
         APT_FORCE="--allow-downgrades --allow-remove-essential --allow-change-held-packages"
 
         cat >> /etc/profile.d/${SOFTWARE_NAME}.sh << EOF
-export BIN_NAME=fluent
-export CONF_DIR=/etc/${BIN_NAME}
-export PLUGIN_DIR=${CONF_DIR}/plugin
-export LOG_DIR=/var/log/${BIN_NAME}
-export PID_DIR=/var/run/${BIN_NAME}
-export CONF_FILE=${CONF_DIR}/${BIN_NAME}.conf
+export FLUENT_BIN_NAME=fluent
+export FLUENT_CONF_DIR=/etc/${FLUENT_BIN_NAME}
+export FLUENT_PLUGIN_DIR=${FLUENT_CONF_DIR}/plugin
+export FLUENT_LOG_DIR=/var/log/${FLUENT_BIN_NAME}
+export FLUENT_PID_DIR=/var/run/${FLUENT_BIN_NAME}
+export FLUENT_CONF_FILE=${FLUENT_CONF_DIR}/${FLUENT_BIN_NAME}.conf
 EOF
 
-        export BIN_NAME=fluent
-        export CONF_DIR=/etc/${BIN_NAME}
-        export PLUGIN_DIR=${CONF_DIR}/plugin
-        export LOG_DIR=/var/log/${BIN_NAME}
-        export PID_DIR=/var/run/${BIN_NAME}
-        export CONF_FILE=${CONF_DIR}/${BIN_NAME}.conf
+        export FLUENT_BIN_NAME=fluent
+        export FLUENT_CONF_DIR=/etc/${FLUENT_BIN_NAME}
+        export FLUENT_PLUGIN_DIR=${FLUENT_CONF_DIR}/plugin
+        export FLUENT_LOG_DIR=/var/log/${FLUENT_BIN_NAME}
+        export FLUENT_PID_DIR=/var/run/${FLUENT_BIN_NAME}
+        export FLUENT_CONF_FILE=${FLUENT_CONF_DIR}/${FLUENT_BIN_NAME}.conf
     ;;
     * )
         juju-log "Your version of Ubuntu is not supported. Exiting"
@@ -250,10 +249,10 @@ function all::all::install_from_source() {
     # Get Fluentd source code and checkout the latest from 0.12 branch
     juju-log "Downloading sources"
     status-set maintenance "Downloading sources"
-    [ -d "/opt/${BIN_NAME}" ] || \
-        git clone --quiet https://github.com/fluent/fluentd.git /opt/${BIN_NAME}
+    [ -d "/opt/${FLUENT_BIN_NAME}" ] || \
+        git clone --quiet https://github.com/fluent/fluentd.git /opt/${FLUENT_BIN_NAME}
 
-    cd /opt/${BIN_NAME}
+    cd /opt/${FLUENT_BIN_NAME}
     git checkout tags/v${FLUENTD_VERSION}
     git pull --quiet origin tags/v${FLUENTD_VERSION}
 
@@ -270,31 +269,31 @@ function all::all::install_from_source() {
     status-set maintenance "Installing..."
 
     # Shortcut to match td-agent naming for fluentd gem
-    ln -sf /usr/local/bin/fluentd /usr/sbin/${BIN_NAME}
+    ln -sf /usr/local/bin/fluentd /usr/sbin/${FLUENT_BIN_NAME}
 
     # Add System User (ref deb package)
-    if ! getent passwd ${BIN_NAME} >/dev/null; then
-        adduser --group --system --no-create-home ${BIN_NAME}
+    if ! getent passwd ${FLUENT_BIN_NAME} >/dev/null; then
+        adduser --group --system --no-create-home ${FLUENT_BIN_NAME}
     fi
 
-    for FOLDER in "${CONF_DIR}" "${PLUGIN_DIR}" "${CONF_DIR}" "${LOG_DIR}" "${LOG_DIR}/buffer" "${PID_DIR}"
+    for FOLDER in "${FLUENT_CONF_DIR}" "${FLUENT_PLUGIN_DIR}" "${FLUENT_CONF_DIR}" "${FLUENT_LOG_DIR}" "${FLUENT_LOG_DIR}/buffer" "${FLUENT_PID_DIR}"
     do
         [ -d "${FOLDER}" ] || mkdir -p "${FOLDER}"
-        chown -R ${BIN_NAME} "${FOLDER}"
+        chown -R ${FLUENT_BIN_NAME} "${FOLDER}"
         chmod 0755 "${FOLDER}"
     done 
 
-    [ -d "/var/log/${BIN_NAME}/buffer/" ]&& \
-        chown -R ${BIN_NAME}:${BIN_NAME} /var/log/${BIN_NAME}/buffer/
-    [ -d "/tmp/${BIN_NAME}/" ] && \
-        chown -R ${BIN_NAME}:${BIN_NAME} /tmp/${BIN_NAME}/
+    [ -d "/var/log/${FLUENT_BIN_NAME}/buffer/" ]&& \
+        chown -R ${FLUENT_BIN_NAME}:${FLUENT_BIN_NAME} /var/log/${FLUENT_BIN_NAME}/buffer/
+    [ -d "/tmp/${FLUENT_BIN_NAME}/" ] && \
+        chown -R ${FLUENT_BIN_NAME}:${FLUENT_BIN_NAME} /tmp/${FLUENT_BIN_NAME}/
     [ -d "/etc/logrotate.d/" ] && \
         install -m 0644 -o root -g root \
-            ${MYDIR}/../files/etc/${BIN_NAME}/logrotate.d/${BIN_NAME}.logrotate /etc/logrotate.d/${BIN_NAME}
+            ${MYDIR}/../files/etc/${FLUENT_BIN_NAME}/logrotate.d/${FLUENT_BIN_NAME}.logrotate /etc/logrotate.d/${FLUENT_BIN_NAME}
 
-    if [ ! -e "/etc/default/${BIN_NAME}" ]; then
-  cat > /etc/default/${BIN_NAME} <<EOF
-# This file is sourced by /bin/sh from /etc/init.d/${BIN_NAME}
+    if [ ! -e "/etc/default/${FLUENT_BIN_NAME}" ]; then
+  cat > /etc/default/${FLUENT_BIN_NAME} <<EOF
+# This file is sourced by /bin/sh from /etc/init.d/${FLUENT_BIN_NAME}
 # Options to pass to td-agent
 TD_AGENT_OPTIONS=""
 
@@ -302,13 +301,13 @@ EOF
     fi
 
     install -m 0755 -o root -g root \
-        ${MYDIR}/../files/etc/init.d/${BIN_NAME} /etc/init.d/${BIN_NAME}
+        ${MYDIR}/../files/etc/init.d/${FLUENT_BIN_NAME} /etc/init.d/${FLUENT_BIN_NAME}
 
-    if [ -x "/etc/init.d/${BIN_NAME}" ]; then
-        if [ ! -e "/etc/init/${BIN_NAME}.conf" ]; then
-            update-rc.d ${BIN_NAME} defaults >/dev/null
+    if [ -x "/etc/init.d/${FLUENT_BIN_NAME}" ]; then
+        if [ ! -e "/etc/init/${FLUENT_BIN_NAME}.conf" ]; then
+            update-rc.d ${FLUENT_BIN_NAME} defaults >/dev/null
         fi
-        # invoke-rc.d ${BIN_NAME} start || exit $?
+        # invoke-rc.d ${FLUENT_BIN_NAME} start || exit $?
     fi
 }
 
@@ -340,30 +339,30 @@ function xenial::ppc64le::install_fluentd() {
 #
 # Management of the agent
 # 
-# Note: keeping "all_all" because probable changes with upstart/systemd
+# Note: keeping "all::all" because probable changes with upstart/systemd
 # 
 #####################################################################
 
 # This creates the file structure for template storage
 function all::all::start_fluentd() {
-    juju-log "Restarting Service ${BIN_NAME}"
-    status-set maintenance "Restarting Service ${BIN_NAME}"
-    service ${BIN_NAME} start || service ${BIN_NAME} restart
-    status-set active "${BIN_NAME} installed and running"
+    juju-log "Restarting Service ${FLUENT_BIN_NAME}"
+    status-set maintenance "Restarting Service ${FLUENT_BIN_NAME}"
+    service ${FLUENT_BIN_NAME} start || service ${FLUENT_BIN_NAME} restart
+    status-set active "${FLUENT_BIN_NAME} installed and running"
 }
 
 function all::all::stop_fluentd() {
-    juju-log "Stopping Service ${BIN_NAME}"
-    status-set maintenance "Stopping Service ${BIN_NAME}"
-    service ${BIN_NAME} stop
-    status-set maintenance "${BIN_NAME} installed but not running"
+    juju-log "Stopping Service ${FLUENT_BIN_NAME}"
+    status-set maintenance "Stopping Service ${FLUENT_BIN_NAME}"
+    service ${FLUENT_BIN_NAME} stop
+    status-set maintenance "${FLUENT_BIN_NAME} installed but not running"
 }
 
 function all::all::reload_fluentd() {
-    juju-log "Reloading Service ${BIN_NAME}"
-    status-set maintenance "Reloading Service ${BIN_NAME}"
-    service ${BIN_NAME} reload || service ${BIN_NAME} force-reload
-    status-set active "${BIN_NAME} installed and running"
+    juju-log "Reloading Service ${FLUENT_BIN_NAME}"
+    status-set maintenance "Reloading Service ${FLUENT_BIN_NAME}"
+    service ${FLUENT_BIN_NAME} reload || service ${FLUENT_BIN_NAME} force-reload
+    status-set active "${FLUENT_BIN_NAME} installed and running"
 }
 
 #####################################################################
@@ -375,7 +374,7 @@ function all::all::reload_fluentd() {
 # This creates the file structure for template storage
 function all::all::configure_fluentd() {
     # Emulating the structure of Apache vhosts in this context
-    for FOLDER in "${CONF_DIR}/conf.d" "${CONF_DIR}/conf.d/enabled"
+    for FOLDER in "${FLUENT_CONF_DIR}/conf.d" "${FLUENT_CONF_DIR}/conf.d/enabled"
     do
         [ -d "${FOLDER}" ] || mkdir -p "${FOLDER}"
         chmod 0755 "${FOLDER}"
@@ -384,22 +383,73 @@ function all::all::configure_fluentd() {
     charm::lib::get_templates "${TEMPLATE_DIR}"
 
     # Copying existing templates 
-    ln -sf "${TEMPLATE_DIR}/${SOFTWARE_CLASS}/${SOFTWARE_NAME}" "${CONF_DIR}/conf.d/available"
+    ln -sf "${TEMPLATE_DIR}/${SOFTWARE_CLASS}/${SOFTWARE_NAME}" "${FLUENT_CONF_DIR}/conf.d/available"
 
     # cronjob for fluentd to add configuration
+    install -m 0755 -o root -g root \
+        ${MYDIR}/../files/usr/local/bin/fluentd-update-config.sh /usr/local/bin/fluentd-update-config.sh
     install -m 0755 -o root -g root \
         ${MYDIR}/../files/usr/local/bin/fluentd-update-config.sh /usr/local/bin/fluentd-update-config.sh
 
     install -m 0755 -o root -g root \
         ${MYDIR}/../files/etc/cron.d/fluentd /etc/cron.d/fluentd
 
-    sed -i "s,CONF_DIR,${CONF_DIR},g" /etc/cron.d/fluentd
+    sed -i "s,FLUENT_CONF_DIR,${FLUENT_CONF_DIR},g" /etc/cron.d/fluentd
 
     install -m 0644 -o root -g root \
-        "${MYDIR}/../files/etc/fluent/fluent.conf" "/etc/${BIN_NAME}/${BIN_NAME}.conf"
+        "${MYDIR}/../files/etc/fluent/fluent.conf" "/etc/${FLUENT_BIN_NAME}/${FLUENT_BIN_NAME}.conf"
 
     service cron restart
 }
+
+#####################################################################
+#
+# Relating to outside world
+# 
+#####################################################################
+
+@hook 'elasticsearch-relation-joined'
+function initialize_connection_to_elasticsearch() {
+    juju-log "Detected Elasticsearch relation. Connecting."
+    charms.reactive set_state 'elasticsearch.connected'
+}
+
+@hook 'elasticsearch-relation-departed'
+function connect_to_elasticsearch() {
+    # Hard coding plugin name 
+    PLUGIN=elasticsearch
+
+    [ -z "$(relation-get cluster-name)" ] && exit 0
+
+    juju-log $JUJU_REMOTE_UNIT modified its settings
+
+    PLUGIN_HOST=""
+    for MEMBER in $(relation-list)
+    do
+        ES_HOST=$(relation-get private-address ${MEMBER})
+        ES_PORT=$(relation-get port ${MEMBER})
+        PLUGIN_HOST+="${ES_HOST}:${ES_HOST},"
+    done
+    PLUGIN_HOST="$(echo ${PLUGIN_HOST} | head -c -2)"
+
+    juju-log /usr/local/bin/fluentd-add-output.sh -p "${PLUGIN}" -h "${PLUGIN_HOST}" && \
+    /usr/local/bin/fluentd-add-output.sh -p "${PLUGIN}" -h "${PLUGIN_HOST}" && \
+        charms.reactive set_state 'elasticsearch.available'
+}
+
+@hook 'elasticsearch-relation-departed'
+function disconnect_from_elasticsearch() {
+    juju-log "Detected Elasticsearch relation destruction. Disconnecting."
+    charms.reactive set_state 'elasticsearch.departed'
+    connect_to_elasticsearch
+}
+
+
+#####################################################################
+#
+# Juju Lifecycle 
+# 
+#####################################################################
 
 # @hook 'install'
 @when_not 'fluentd.installed'
