@@ -21,7 +21,7 @@ requires:
     scope: container
   elasticsearch:
     interface: elasticsearch
-
-#peers:
-#  peer-relation:
-#   interface: interface-name
+  namenode:
+    interface: dfs
+  influxdb:
+    interface: influxdb-api

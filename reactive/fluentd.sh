@@ -382,7 +382,7 @@ function all::all::configure_fluentd() {
 
 #####################################################################
 #
-# Relating to outside world
+# Relating to ElasticSearch
 # 
 #####################################################################
 
@@ -422,6 +422,92 @@ function disconnect_from_elasticsearch() {
     connect_to_elasticsearch
 }
 
+#####################################################################
+#
+# Relating to HDFS
+# 
+#####################################################################
+
+@hook 'namenode-relation-joined'
+function initialize_connection_to_hdfs() {
+    juju-log "Detected DFS relation. Connecting."
+}
+
+@hook 'namenode-relation-changed'
+function connect_to_hdfs() {
+    # Hard coding plugin name 
+    PLUGIN=hdfs
+
+    # [ -z "$(relation-get cluster-name)" ] && exit 0
+
+    juju-log $JUJU_REMOTE_UNIT modified its settings
+
+    PLUGIN_HOST=""
+    for MEMBER in $(relation-list)
+    do
+        NAMENODE_HOST=$(relation-get private-address ${MEMBER})
+        NAMENODE_PORT=$(relation-get webhdfs-port ${MEMBER})
+        PLUGIN_HOST+="${NAMENODE_HOST}:${NAMENODE_PORT},"
+    done
+    PLUGIN_HOST="$(echo ${PLUGIN_HOST} | head -c -2)"
+
+    # juju-log /usr/local/bin/fluentd-add-output.sh -p "${PLUGIN}" -h "${PLUGIN_HOST}" && \
+    /usr/local/bin/fluentd-add-output.sh \
+        -p "${PLUGIN}" \
+        -h "${PLUGIN_HOST}" \
+        -c "${FLUENT_CONF_DIR}"
+}
+
+@hook 'namenode-relation-departed'
+function disconnect_from_hdfs() {
+    juju-log "Detected DFS relation destruction. Disconnecting."
+    connect_to_hdfs
+}
+
+#####################################################################
+#
+# Relating to InfluxDB
+# Note: we actually don't manage username:password in this example
+# 
+#####################################################################
+
+@hook 'influxdb-relation-joined'
+function initialize_connection_to_influxdb() {
+    juju-log "Detected influxdb relation. Connecting."
+}
+
+@hook 'influxdb-relation-changed'
+function connect_to_influxdb() {
+    # Hard coding plugin name 
+    PLUGIN=influxdb
+
+    # [ -z "$(relation-get cluster-name)" ] && exit 0
+
+    juju-log $JUJU_REMOTE_UNIT modified its settings
+
+    PLUGIN_HOST=""
+    for MEMBER in $(relation-list)
+    do
+        INFLUXDB_HOST=$(relation-get hostname ${MEMBER})
+        INFLUXDB_PORT=$(relation-get port ${MEMBER})
+        INFLUXDB_USERNAME=$(relation-get username ${MEMBER})
+        INFLUXDB_PASSWORD=$(relation-get password ${MEMBER})
+        PLUGIN_HOST+="${NAMENODE_HOST}:${NAMENODE_PORT},"
+    done
+    PLUGIN_HOST="$(echo ${PLUGIN_HOST} | head -c -2)"
+
+    # juju-log /usr/local/bin/fluentd-add-output.sh -p "${PLUGIN}" -h "${PLUGIN_HOST}" && \
+    /usr/local/bin/fluentd-add-output.sh \
+        -p "${PLUGIN}" \
+        -h "${PLUGIN_HOST}" \
+        -c "${FLUENT_CONF_DIR}"
+}
+
+@hook 'influxdb-relation-departed'
+function disconnect_from_influxdb() {
+    juju-log "Detected influxdb relation destruction. Disconnecting."
+    connect_to_influxdb
+}
 
 #####################################################################
 #
