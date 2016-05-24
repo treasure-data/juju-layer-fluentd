@@ -1,5 +1,5 @@
 repo: https://github.com/SaMnCo/layer-fluentd.git
-includes: ['layer:basic', 'interface:elasticsearch'] 
+includes: ['layer:basic', 'interface:elasticsearch', 'interface:influxdb-api', 'interface:dfs'] 
 options:
   basic:
     packages:

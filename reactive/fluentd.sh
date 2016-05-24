@@ -299,7 +299,7 @@ function xenial::x86_64::install_fluentd() {
     all::all::install_from_source
 }
 
-function precise::x86_64::install_fluentd() { 
+function precise::ppc64le::install_fluentd() { 
     all::all::install_from_source
 }
 

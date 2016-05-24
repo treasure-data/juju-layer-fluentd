@@ -20,7 +20,7 @@ function all::all::add_output_plugin() {
     local PLUGIN_HOST=$1
 
 
-    find "${TEMPLATE_DIR}" -type d -name "output_${PLUGIN_ID}" \
+    find "${TEMPLATE_DIR}/${SOFTWARE_CLASS}/${SOFTWARE_NAME}" -type d -name "output_${PLUGIN_ID}" \
         -exec sudo "{}/install.sh" \; \
         -exec sudo cp -f "{}/output_${PLUGIN_ID}.conf" "${ENABLED_FOLDER}/" \;
 
