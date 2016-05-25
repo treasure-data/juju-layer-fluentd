@@ -58,7 +58,7 @@ else
             DISTROBASEDON='Debian'
             if [ -f /etc/lsb-release ] ; then
                 DIST=`cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }'`
-                PSEUDONAME=`cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }'`
+                PSEUDONAME=`cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }' | tr '[:upper:]' '[:lower:]'`
                 REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
             fi
         fi
@@ -373,7 +373,7 @@ function all::all::configure_fluentd() {
     sed -i "s,FLUENT_CONF_DIR,${FLUENT_CONF_DIR},g" /etc/cron.d/fluentd
 
     install -m 0644 -o root -g root \
-        "${MYDIR}/../files/etc/fluent/fluent.conf" "/etc/${FLUENT_BIN_NAME}/${FLUENT_BIN_NAME}.conf"
+        "${MYDIR}/../files/etc/${SOFTWARE_NAME}/${SOFTWARE_NAME}.conf" "/etc/${FLUENT_BIN_NAME}/${FLUENT_BIN_NAME}.conf"
 
     service cron restart
 
