@@ -68,7 +68,7 @@ If there are more charms you'd like to create input for, you can PR new configur
 
 Any input plugin is made of 
 
-* an input_<charm-name>.conf file with the configuration of the input. <charm-name> must match the name of the target charm in metadata.yaml
+* an input_${charm-name}.conf file with the configuration of the input. <charm-name> must match the name of the target charm in metadata.yaml
 
 The format of the processing chain is described in the documentation of the repo. It is possible to create chained and filters, but the final filter has to follow a convention to make it generic enough.
 
@@ -79,7 +79,7 @@ As input plugins are supposedly automatic, the files/usr/local/bin/fluentd-updat
 An output plugin is made of: 
 
 * an install.sh script that will be run prior to the installation of the plugin (usually installing just the gem that is needed)
-* an output_<charm-name>.conf file with the configuration of the output. <charm-name> must match the name of the target charm in metadata.yaml
+* an output_${charm-name}.conf file with the configuration of the output. <charm-name> must match the name of the target charm in metadata.yaml
 
 Also, as output plugins are managed by relations, you must also modify this charm to manage the new relation. You'll have to edit
 
