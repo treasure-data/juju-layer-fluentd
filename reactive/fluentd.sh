@@ -284,7 +284,7 @@ EOF
         # invoke-rc.d ${FLUENT_BIN_NAME} start || exit $?
     fi
 
-    gem install fluent-plugin-reform-reformer
+    gem install fluent-plugin-record-reformer
 }
 
 function precise::x86_64::install_fluentd() { 
