@@ -289,10 +289,14 @@ EOF
 
 function precise::x86_64::install_fluentd() { 
     all::all::install_from_source
+    # This is to solve some plugin deps problems
+    gem install influxdb -v 0.2.3
 }
 
 function trusty::x86_64::install_fluentd() { 
     all::all::install_from_source 
+    # This is to solve some plugin deps problems
+    gem install influxdb -v 0.2.3
 }
 
 function xenial::x86_64::install_fluentd() { 
@@ -301,10 +305,14 @@ function xenial::x86_64::install_fluentd() {
 
 function precise::ppc64le::install_fluentd() { 
     all::all::install_from_source
+    # This is to solve some plugin deps problems
+    gem install influxdb -v 0.2.3
 }
 
 function trusty::ppc64le::install_fluentd() { 
     all::all::install_from_source
+    # This is to solve some plugin deps problems
+    gem install influxdb -v 0.2.3
 }
 
 function xenial::ppc64le::install_fluentd() { 

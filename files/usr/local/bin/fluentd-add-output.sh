@@ -31,8 +31,8 @@ function all::all::add_output_plugin() {
         } || {
             egrep -q "host" "${ENABLED_FOLDER}/output_${PLUGIN_ID}.conf" \
             && {
-                PLUGIN_HOST=$(echo ${PLUGIN_HOST} | cut -f1 -d':')
-                PLUGIN_PORT=$(echo ${PLUGIN_HOST} | cut -f2 -d':' | cut -f1 -d',')
+                PLUGIN_PORT=$(echo "${PLUGIN_HOST}" | cut -f2 -d':' | cut -f1 -d',')
+                PLUGIN_HOST=$(echo "${PLUGIN_HOST}" | cut -f1 -d':')
                 sudo sed -i \
                     -e "s|^\ \ host\ .*$|\ \ host ${PLUGIN_HOST}|g" \
                     -e "s|^\ \ port\ .*$|\ \ port ${PLUGIN_PORT}|g" \
