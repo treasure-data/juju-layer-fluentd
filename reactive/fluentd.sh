@@ -492,7 +492,7 @@ function connect_to_influxdb() {
         INFLUXDB_PORT=$(relation-get port ${MEMBER})
         INFLUXDB_USERNAME=$(relation-get username ${MEMBER})
         INFLUXDB_PASSWORD=$(relation-get password ${MEMBER})
-        PLUGIN_HOST+="${NAMENODE_HOST}:${NAMENODE_PORT},"
+        PLUGIN_HOST+="${INFLUXDB_HOST}:${INFLUXDB_PORT},"
     done
     PLUGIN_HOST="$(echo ${PLUGIN_HOST} | head -c -2)"
 

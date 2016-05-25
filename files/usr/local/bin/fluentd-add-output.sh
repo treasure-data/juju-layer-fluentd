@@ -20,7 +20,7 @@ function all::all::add_output_plugin() {
     local PLUGIN_HOST=$1
 
 
-    find "${TEMPLATE_DIR}/${SOFTWARE_CLASS}/${SOFTWARE_NAME}" -type d -name "output_${PLUGIN_ID}" \
+    find "${TEMPLATE_DIR}/${SOFTWARE_CLASS}/${ALT_SOFTWARE_NAME}" -type d -name "output_${PLUGIN_ID}" \
         -exec sudo "{}/install.sh" \; \
         -exec sudo cp -f "{}/output_${PLUGIN_ID}.conf" "${ENABLED_FOLDER}/" \;
 
@@ -75,6 +75,8 @@ while true; do
             AVAILABLE_FOLDER=${CONF_DIR}/conf.d/available
             ENABLED_FOLDER=${CONF_DIR}/conf.d/enabled
             SOFTWARE_NAME="$(echo ${CONF_DIR} | rev | cut -f1 -d "/" | rev)"
+            # This is a dirty hack because fluent, fluentd, td-agent...
+            ALT_SOFTWARE_NAME="${SOFTWARE_NAME}d"
             shift 2
             ;;
         -p|--plugin)
