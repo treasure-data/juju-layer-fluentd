@@ -373,7 +373,7 @@ function all::all::configure_fluentd() {
     sed -i "s,FLUENT_CONF_DIR,${FLUENT_CONF_DIR},g" /etc/cron.d/fluentd
 
     install -m 0644 -o root -g root \
-        "${MYDIR}/../files/etc/${SOFTWARE_NAME}/${SOFTWARE_NAME}.conf" "/etc/${FLUENT_BIN_NAME}/${FLUENT_BIN_NAME}.conf"
+        "${MYDIR}/../files/etc/${FLUENT_BIN_NAME}/${FLUENT_BIN_NAME}.conf" "/etc/${FLUENT_BIN_NAME}/${FLUENT_BIN_NAME}.conf"
 
     service cron restart
 
