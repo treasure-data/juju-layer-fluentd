@@ -40,6 +40,13 @@ function charm::lib::find_roles() {
                 echo "Configuring ${SOFTWARE_NAME} for ${TARGET} (Ceph Storage)"
                 TARGET_LIST+=" ${TARGET} dmesg ceph-global"
             ;;
+            "*fluent*" )
+                echo "Not monitoring myself"
+            ;;
+            mysql | mariadb | percona-cluster | galera* )
+                echo "Using standard MySQL for ${TARGET}"
+                TARGET_LIST+=" mysql"
+            ;;
             * )
                 echo "Configuring ${SOFTWARE_NAME} for ${TARGET} (Generic Solution)"
                 TARGET_LIST+=" ${TARGET}"

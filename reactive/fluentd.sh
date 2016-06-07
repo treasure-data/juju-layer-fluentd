@@ -218,7 +218,10 @@ function all::all::install_from_repo() {
 function all::all::install_from_source() {
     juju-log "Installing pre-requisites"
     status-set maintenance "Installing pre-requisites"
-    ${APT_CMD} install -yqq ${APT_FORCE} bundler
+    sudo apt-add-repository -y ppa:brightbox/ruby-ng
+    ${APT_CMD} update
+
+    ${APT_CMD} install -yqq ${APT_FORCE} bundler ruby2.0 ruby2.0-dev
 
     # Get Fluentd source code and checkout the latest from 0.12 branch
     juju-log "Downloading sources"
@@ -482,6 +485,29 @@ function disconnect_from_hdfs() {
 @hook 'influxdb-relation-joined'
 function initialize_connection_to_influxdb() {
     juju-log "Detected influxdb relation. Connecting."
+    # Hard coding plugin name 
+    PLUGIN=influxdb
+
+    # [ -z "$(relation-get cluster-name)" ] && exit 0
+
+    juju-log $JUJU_REMOTE_UNIT modified its settings
+
+    PLUGIN_HOST=""
+    for MEMBER in $(relation-list)
+    do
+        INFLUXDB_HOST=$(relation-get hostname ${MEMBER})
+        INFLUXDB_PORT=$(relation-get port ${MEMBER})
+        INFLUXDB_USERNAME=$(relation-get username ${MEMBER})
+        INFLUXDB_PASSWORD=$(relation-get password ${MEMBER})
+        PLUGIN_HOST+="${INFLUXDB_HOST}:${INFLUXDB_PORT},"
+    done
+    PLUGIN_HOST="$(echo ${PLUGIN_HOST} | head -c -2)"
+
+    # juju-log /usr/local/bin/fluentd-add-output.sh -p "${PLUGIN}" -h "${PLUGIN_HOST}" && \
+    /usr/local/bin/fluentd-add-output.sh \
+        -p "${PLUGIN}" \
+        -h "${PLUGIN_HOST}" \
+        -c "${FLUENT_CONF_DIR}"
 }
 
 @hook 'influxdb-relation-changed'
@@ -556,6 +582,7 @@ function start_fluentd() {
     all::all::start_fluentd
 
     status-set active "fluentd installed and available"
+    charms.reactive set_state 'fluentd.started'
 }
 
 reactive_handler_main
